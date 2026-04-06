@@ -1,0 +1,30 @@
+include .env
+export
+
+env-up:
+	@docker compose up -d todoapp-postgres
+
+env-down:
+	@docker compose down todoapp-postgres
+
+env-cleanup:
+	@powershell -ExecutionPolicy Bypass -File cleanup.ps1
+
+migrate-create:
+	@docker compose run --rm todoapp-postgres-migrate \
+		create \
+		-ext sql \
+		-dir /migrations \
+		-seq "$(seq)"
+
+migrate-up:
+	@make migrate-action action=up
+
+migrate-down:
+	@make migrate-action action=down
+
+migrate-action:
+	@docker compose run --rm todoapp-postgres-migrate \
+		-path /migrations \
+    	-database postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@todoapp-postgres:5432/${POSTGRES_DB}?sslmode=disable \
+    	"$(action)"
