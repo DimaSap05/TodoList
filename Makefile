@@ -10,6 +10,12 @@ env-down:
 env-cleanup:
 	@powershell -ExecutionPolicy Bypass -File cleanup.ps1
 
+env-port-forward:
+	@docker compose up -d port-forwarder
+
+env-port-close:
+	@docker compose down -d port-forwarder
+
 migrate-create:
 	@docker compose run --rm todoapp-postgres-migrate \
 		create \
